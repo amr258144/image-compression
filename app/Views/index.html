@@ -1,0 +1,163 @@
+{% extends "layout.html" %}
+
+{% block title %}Image Compression Tool{% endblock %}
+{% block head %}
+{{ parent() }}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <link rel="stylesheet" href="{{BASE_URL}}assets/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+    <div class="sidenav">
+
+        <form action="{{BASE_URL}}app/Controllers/ImageCompression.php" method="POST">
+            <h1>Filters</h1>
+            <div class="filterdiv">
+                <input type="checkbox" class="blur" name="filters[]" value="blur"> <span class="label">Blur</span>
+                <br>
+                <input class="text" type="text" name="blur" disabled><br>
+            </div>
+            <!-- <div class="filterdiv">
+                <input type="checkbox" name="watermark" value="watermark"> <span class="label">watermark</span><br>
+            </div> -->
+            
+            <div class="filterdiv">
+                <input type="checkbox" class="background_color" name="filters[]" value="background_color"> <span class="label">Backgroud</span>
+                <br>
+                <input class="text" type="text" name="background_color" disabled><br>
+            </div>
+            <div class="filterdiv">
+                <input type="checkbox" class="brightness" name="filters[]" value="brightness"> <span class="label">Brightness</span>
+                <br>
+                <input class="text" type="text" name="brightness" disabled><br>
+            </div>
+            <div class="filterdiv">
+                <input type="checkbox" class="contrast" name="filters[]" value="contrast"> <span class="label">Contrast</span>
+                <br>
+                <input class="text" type="text" name="contrast" disabled><br>
+            </div>
+            
+            <!-- <div class="filterdiv">
+                <input type="checkbox" name="rotate" value="rotate"> <span class="label">Rotate</span><br>
+            </div> -->
+            <div class="filterdiv">
+                <input type="submit" value="Submit">
+                 <!-- onclick="return myfunction();" -->
+            </div>
+    </div>
+
+    <div class="main">
+        <div style="margin-top: 30px">
+            <span class="label1">Enter Image URL:&nbsp;</span>
+            <input id="imgUrl" type="text" name="original_image" required autofocus>
+            <br>
+            <div class="row" style="margin-top: 30px">
+                <div class="col-md-8">
+                    <span class="label1">Feature:&nbsp;</span>
+                    <select name="feature" id="feature">
+                      <option value="0">Please Select Feature</option>
+                      <option name="feature" value="crop">Crop</option>
+                      <option name="feature" value="smart_crop">Smart Crop (Face Detection)</option>
+                      <option name="feature" value="fitin">Fit In Image</option>
+                      <option name="feature" value="resize">Resize</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row" id="resize" style="display: none;">
+                <div class="col-md-4">
+                    <span class="label1">Width:&nbsp;</span>
+                    <input class="text" type="text" name="width">
+                </div>
+                <div class="col-md-4">
+                    <span class="label1">Height:&nbsp;</span>
+                    <input class="text" type="text" name="height">
+                </div>
+            </div>
+            <div class="row" id="crop" style="display: none;">
+                <div class="col-md-2">
+                    <span class="label1">Top Left X:&nbsp;</span>
+                    <input class="text" type="text" name="top_left_X">
+                </div>
+                <div class="col-md-2">
+                    <span class="label1">Top Left Y:&nbsp;</span>
+                    <input class="text" type="text" name="top_left_Y">
+                </div>
+                <div class="col-md-2">
+                    <span class="label1">Bottom Right X:&nbsp;</span>
+                    <input class="text" type="text" name="bottom_right_X">
+                </div>
+                <div class="col-md-2">
+                    <span class="label1">Bottom Right Y:&nbsp;</span>
+                    <input class="text" type="text" name="bottom_right_Y">
+                </div>
+            </div>
+        </form>
+            <div class="container-fluid">
+            <div class="row">
+                <div class="col" id="ogiimage">
+
+                </div>
+                <div class="col" id="newimage">
+
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $("#feature").change(function() {
+            if($('option:selected', this).val() == 'resize' || $('option:selected', this).val() == 'fitin' || $('option:selected', this).val() == 'smart_crop') {
+                $('#resize').removeAttr('style');
+                $('#crop').css('display', 'none');
+            }else if($('option:selected', this).val() == 'crop') {
+                $('#crop').removeAttr('style');
+                $('#resize').css('display', 'none');
+            } else {
+                $('#crop').css('display', 'none');
+                $('#resize').css('display', 'none');
+            }
+        });
+
+        $('.blur').click(function(){
+            if($(this).prop("checked") == true){
+                $('input[name=blur]').removeAttr('disabled');
+                $('input[name=blur]').attr('required', 'required');
+            }
+            else if($(this).prop("checked") == false){
+                $('input[name=blur]').attr('disabled', 'disabled');
+            }
+        });
+        $('.background_color').click(function(){
+            if($(this).prop("checked") == true){
+                $('input[name=background_color]').removeAttr('disabled');
+                $('input[name=background_color]').attr('required', 'required');
+            }
+            else if($(this).prop("checked") == false){
+                $('input[name=background_color]').attr('disabled', 'disabled');
+            }
+        });
+        $('.brightness').click(function(){
+            if($(this).prop("checked") == true){
+                $('input[name=brightness]').removeAttr('disabled');
+                $('input[name=brightness]').attr('required', 'required');
+            }
+            else if($(this).prop("checked") == false){
+                $('input[name=brightness]').attr('disabled', 'disabled');
+            }
+        });
+        $('.contrast').click(function(){
+            if($(this).prop("checked") == true){
+                $('input[name=contrast]').removeAttr('disabled');
+                $('input[name=contrast]').attr('required', 'required');
+            }
+            else if($(this).prop("checked") == false){
+                $('input[name=contrast]').attr('disabled', 'disabled');
+            }
+        });
+    </script>
+    <script src="{{BASE_URL}}assets/js/script.js"></script>
+{% endblock %}

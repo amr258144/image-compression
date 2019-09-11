@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+    	{% block head %}
+	        <meta charset="UTF-8">
+	        <title>{% block title %}{% endblock %}</title>
+	    {% endblock %}
+    </head>
+    <body>
+        {% block content %}
+        {% endblock %}
+
+        <div id="footer" style="position: relative; bottom: 5px; left: 44%;">
+        	{% block footer %}
+        		&copy; Copyright {{ "now"|date("Y") }} by <a href="#">Network18</a>.
+        	{% endblock %}
+        </div>
+
+    </body>
+</html>
